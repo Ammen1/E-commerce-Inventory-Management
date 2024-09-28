@@ -127,5 +127,3 @@ http://localhost:4000/api/v1/users
 
 This API documentation provides all necessary details for integrating the authentication functionalities into your application. For further questions or clarifications, please contact the development team.
 ```
-
-Feel free to adjust any section to fit your application's specific requirements!
