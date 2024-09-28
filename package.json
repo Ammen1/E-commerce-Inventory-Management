@@ -1,0 +1,26 @@
+{
+  "name": "e-commerce-inventory-management",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "joi": "^17.13.3",
+    "jsonwebtoken": "^9.0.2",
+    "kafka-node": "^5.0.0",
+    "mongoose": "^8.7.0",
+    "nodemailer": "^6.9.15",
+    "swagger-ui-express": "^5.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.7"
+  }
+}
