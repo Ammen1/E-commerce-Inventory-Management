@@ -83,13 +83,3 @@ Contributions are welcome! Please fork the repository and submit a pull request.
 - [Kafka](https://kafka.apache.org/)
 
 ```
-
-### Additional Notes:
-
-1. **Image Path**: Ensure that the image path (`./ELST.svg`) is correct and that the image exists in your project directory.
-
-2. **API Documentation Path**: Update the API documentation path to the actual file location if you have created it.
-
-3. **Environment Variables**: Double-check that the environment variables listed are correct and relevant for your project.
-
-Feel free to modify any sections or add new ones as necessary! Let me know if you need further assistance or changes.
