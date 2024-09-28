@@ -18,10 +18,17 @@ export const register = catchAsyncErrors(async (req, res, next) => {
       return next(new ErrorHandler("Email already registered!", 400));
     }
 
+      // Validate phone number (10 digits)
+  const phoneRegex = /^\d{10}$/;
+  if (!phoneRegex.test(phone)) {
+    return next(new ErrorHandler("Phone number must be exactly 10 digits!", 400));
+  }
+
+
     const userData = {
       name,
       email,
-      phone,
+      phone: phone.toString(),
       password, 
       role,
     };
