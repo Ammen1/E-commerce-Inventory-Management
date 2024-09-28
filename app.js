@@ -4,6 +4,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import fileUpload from "express-fileupload";
 import dotenv from 'dotenv';
+import { errorMiddleware } from "./middlewares/error.js";
 
 const app = express();
 
@@ -29,5 +30,6 @@ app.use(
 );
 
 dbConnection();
+app.use(errorMiddleware)
 
 export default app;
