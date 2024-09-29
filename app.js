@@ -5,35 +5,21 @@ import cookieParser from "cookie-parser";
 import fileUpload from "express-fileupload";
 import dotenv from "dotenv";
 import { errorMiddleware } from "./middlewares/error.js";
+import { isAuthenticated } from "./utils/auth.js";
+
+import InventoryItemRouter from "./routes/inventory/inventoryItemRoutes.js"
 import UserRouter from "./routes/users/userRoutes.js";
+
+
 import swaggerJsDoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
+import setupSwagger from './swagger.js';
 
 const app = express();
 
 dotenv.config();
-
-// Swagger definition
-const swaggerOptions = {
-  definition: {
-    openapi: "3.0.0",
-    info: {
-      title: "E-commerce Inventory Management API",
-      version: "1.0.0",
-      description: "API documentation for the E-commerce Inventory Management system",
-    },
-    servers: [
-      {
-        url: "http://localhost:4000",
-      },
-    ],
-  },
-  apis: ["./routes/users/*.js"],
-};
-
-// Swagger docs setup
-const swaggerDocs = swaggerJsDoc(swaggerOptions);
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+// Swagger setup
+setupSwagger(app);
 
 app.use(
   cors({
@@ -56,6 +42,7 @@ app.use(
 
 // Register user routes
 app.use("/api/v1/users", UserRouter);
+app.use("/api/v1/inventory", isAuthenticated, InventoryItemRouter)
 
 // Connect to DB
 dbConnection();
