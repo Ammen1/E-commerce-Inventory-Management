@@ -1,9 +1,11 @@
 # E-commerce Inventory Management System API Documentation
 
 ## Overview
+
 This document provides an overview of the authentication API for the E-commerce Inventory Management System. It outlines the available endpoints for user registration, login, and inventory management, including request and response formats.
 
 ## Base URL
+
 ```
 http://localhost:4000/api/v1
 ```
@@ -11,11 +13,13 @@ http://localhost:4000/api/v1
 ## Endpoints
 
 ### 1. User Registration
+
 - **Endpoint:** `/users/register`
 - **Method:** `POST`
 - **Description:** Registers a new user in the system.
 
 #### Request Body
+
 ```json
 {
   "name": "Amen Guda",
@@ -34,9 +38,11 @@ http://localhost:4000/api/v1
   - `role` (string, optional): User role (Admin, Manager, Employee).
 
 #### Responses
+
 - **201 Created**
   - **Description:** User registered successfully.
   - **Response Body:**
+
   ```json
   {
     "success": true,
@@ -60,11 +66,13 @@ http://localhost:4000/api/v1
 ---
 
 ### 2. User Login
+
 - **Endpoint:** `/users/login`
 - **Method:** `POST`
 - **Description:** Logs in a user and returns a JWT token.
 
 #### Request Body
+
 ```json
 {
   "email": "amenguda@gmail.com",
@@ -79,9 +87,11 @@ http://localhost:4000/api/v1
   - `role` (string, required): User's role (Admin, Manager, Employee).
 
 #### Responses
+
 - **200 OK**
   - **Description:** User logged in successfully.
   - **Response Body:**
+
   ```json
   {
     "success": true,
@@ -106,11 +116,13 @@ http://localhost:4000/api/v1
 ---
 
 ### 3. Create Inventory Item
+
 - **Endpoint:** `/inventory`
 - **Method:** `POST`
 - **Description:** Creates a new inventory item in the system.
 
 #### Request Body
+
 ```json
 {
   "name": "Item Name",
@@ -133,9 +145,11 @@ http://localhost:4000/api/v1
   - `author` (string, optional): The author or creator of the inventory item.
 
 #### Responses
+
 - **201 Created**
   - **Description:** Inventory item created successfully.
   - **Response Body:**
+
   ```json
   {
     "success": true,
@@ -164,14 +178,17 @@ http://localhost:4000/api/v1
 ---
 
 ### 4. Get All Inventory Items
+
 - **Endpoint:** `/inventory`
 - **Method:** `GET`
 - **Description:** Retrieves all inventory items from the system.
 
 #### Responses
+
 - **200 OK**
   - **Description:** Successfully retrieved all inventory items.
   - **Response Body:**
+
   ```json
   {
     "success": true,
@@ -211,7 +228,9 @@ http://localhost:4000/api/v1
 ---
 
 ## Error Handling
+
 All errors will return a JSON response with the following structure:
+
 ```json
 {
   "success": false,
@@ -224,14 +243,18 @@ All errors will return a JSON response with the following structure:
 # Kafka Setup with Offset Explorer
 
 ## Overview
+
 This section describes how to set up Apache Kafka and Offset Explorer using Docker. Offset Explorer is a tool that helps you monitor and manage Kafka topics and consumers easily.
 
 ## Prerequisites
+
 - Docker installed on your machine.
 - Docker Compose installed.
 
 ## Step 1: Create a Docker Compose File
+
 Create a file named `docker-compose.yml` in your project directory with the following content:
+
 ```yaml
 version: '3.8'
 
@@ -311,28 +334,34 @@ volumes:
 ```
 
 ## Step 2: Start Docker Containers
+
 Run the following command in your terminal:
+
 ```bash
 docker-compose up -d
 ```
 
 ## Step 3: Install Offset Explorer
-1. Download the latest version of Offset Explorer from the [official website](https://www.kafkalicense.com/).
+
+1. Download the latest version of Offset Explorer from the [official website](https://www.kafkatool.com/index.html).
 2. Unzip the downloaded file.
 3. Navigate to the unzipped folder and run the application:
    - For Windows:
+
    ```bash
    .\bin\OffsetExplorer.exe
    ```
+
    - For macOS:
+
    ```bash
    ./bin/OffsetExplorer
    ```
 
 ## Step 4: Connect to Kafka in Offset Explorer
+
 1. Open Offset Explorer.
 2. In the **Connect to Kafka** dialog, enter the following settings:
    - **Name:** Local Kafka
    - **Bootstrap Servers:** `localhost:9092`
 3. Click **Connect**.
-
