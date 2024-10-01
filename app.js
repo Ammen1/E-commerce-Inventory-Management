@@ -1,19 +1,19 @@
 import express from "express";
-import { dbConnection } from "./db/dbConnection.js";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import fileUpload from "express-fileupload";
 import dotenv from "dotenv";
+
+
 import { errorMiddleware } from "./middlewares/error.js";
 import { isAuthenticated } from "./utils/auth.js";
+import { dbConnection } from "./db/dbConnection.js";
+import setupSwagger from './swagger.js';
+
 
 import InventoryItemRouter from "./routes/inventory/inventoryItemRoutes.js"
 import UserRouter from "./routes/users/userRoutes.js";
 
-
-import swaggerJsDoc from "swagger-jsdoc";
-import swaggerUi from "swagger-ui-express";
-import setupSwagger from './swagger.js';
 
 const app = express();
 
@@ -39,6 +39,11 @@ app.use(
     tempFileDir: "/tmp/",
   })
 );
+
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'OK' });
+});
+
 
 // Register user routes
 app.use("/api/v1/users", UserRouter);
