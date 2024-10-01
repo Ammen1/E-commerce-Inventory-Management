@@ -1,85 +1,85 @@
 version: '3.8'
 
 services:
+  # Application Service
   app:
     build:
-      context: . 
-      dockerfile: Dockerfile
+      context: .  # Specifies the build context (current directory)
+      dockerfile: Dockerfile  # Use the Dockerfile in the current directory
       args:
-        NODE_ENV: development
+        NODE_ENV: development  # Set the build argument for Node.js environment
     ports:
-      - "4000:4000"
+      - "4000:4000"  # Map the host's port 4000 to the container's port 4000
     environment:
-      NODE_ENV: ${NODE_ENV}
+      NODE_ENV: ${NODE_ENV}  # Use environment variables from .env or the host machine
       MONGO_URI: ${MONGO_URI}
-      KAFKA_BROKER: ${KAFKA_BROKER}
+      KAFKA_BROKER: ${KAFKA_BROKER}  # Ensure this is set correctly in your .env file
     depends_on:
-      - mongo
-      - kafka
+      - mongo  # Wait for MongoDB to start before app
+      - kafka  # Wait for Kafka to start before app
     volumes:
-      - .:/app
+      - .:/app  # Mount the current directory into the container
     networks:
       - inventory-network
-    healthcheck:
+    healthcheck:  # Health check for the app service
       test: ["CMD", "curl", "-f", "http://localhost:4000/health"]
       interval: 30s
-      timeout: 10s
+      timeout: 20s
       retries: 5
 
+  # MongoDB Service
   mongo:
-    image: mongo:5.0
-    container_name: mongodb
-    restart: always
+    image: mongo:5.0  # Use MongoDB version 5.0
+    container_name: mongodb  # Name the container "mongodb"
+    restart: always  # Always restart the container if it stops
     ports:
-      - "27017:27017"
+      - "27017:27017"  # Map MongoDB's port
     volumes:
-      - mongo_data:/data/db
+      - mongo_data:/data/db  # Persistent volume for MongoDB data
     networks:
       - inventory-network
-    healthcheck:
+    healthcheck:  # Health check for MongoDB
       test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
       interval: 30s
-      timeout: 10s
+      timeout: 20s
       retries: 5
 
+  # Zookeeper Service (Required for Kafka)
   zookeeper:
-    image: wurstmeister/zookeeper
+    image: docker.io/bitnami/zookeeper:3.9  # Use Bitnami Zookeeper image
     ports:
-      - "2181:2181"
-    networks:
-      - inventory-network
-    healthcheck:
-      test: ["CMD", "echo", "ruok"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-
-  kafka:
-    image: wurstmeister/kafka
-    ports:
-      - "9092:9092"
+      - "2181:2181"  # Map Zookeeper's port
     environment:
-      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
-      KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka:9092,OUTSIDE://localhost:9092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+      - ALLOW_ANONYMOUS_LOGIN=yes  # Allow anonymous login for Zookeeper
     networks:
       - inventory-network
+
+  # Kafka Service
+  kafka:
+    image: 'bitnami/kafka:3.4'  # Use Bitnami Kafka image
+    ports:
+      - '9092:9092'  # Map Kafka's port
+    environment:
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181  # Connect to Zookeeper
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://0.0.0.0:9092,PLAINTEXT_INTERNAL://kafka:9093  # Listen on all interfaces and internal network
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://kafka:9093  # Advertise to external and internal clients
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT  # Protocol mapping
+      - KAFKA_INTER_BROKER_LISTENER_NAME=PLAINTEXT_INTERNAL  # Inter-broker communication listener
     depends_on:
-      - zookeeper
+      - zookeeper  # Wait for Zookeeper to start before Kafka
+    networks:
+      - inventory-network
     healthcheck:
       test: ["CMD", "kafka-topics.sh", "--list", "--zookeeper", "zookeeper:2181"]
       interval: 30s
-      timeout: 10s
+      timeout: 20s
       retries: 5
 
+# Define a network for the services
 networks:
   inventory-network:
-    driver: bridge
+    driver: bridge  # Use a bridge network for internal communication
 
+# Define a volume for MongoDB data persistence
 volumes:
   mongo_data:
