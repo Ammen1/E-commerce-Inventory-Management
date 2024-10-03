@@ -22,7 +22,7 @@ transporter.verify(function (error, success) {
 });
 
 // Function to send an email
-export const sendMail = async ({ to, subject, text, html }) => {
+export const sendMail = async ({ to, subject, text, html, attachments }) => {
   try {
     let info = await transporter.sendMail({
       from: '"EagleLion System Technologies" <e-learning@gooderash.com>',
@@ -30,6 +30,7 @@ export const sendMail = async ({ to, subject, text, html }) => {
       subject,
       text,
       html,
+      attachments,
     });
     console.log('Email sent:', info);
     return info;
