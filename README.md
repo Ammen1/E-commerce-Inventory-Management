@@ -62,7 +62,7 @@ The E-commerce Inventory Management System (IMS) is a robust backend application
 5. Start the server:
 
    ```bash
-   npm start
+   npm run dev
    ```
 
 ## API Documentation

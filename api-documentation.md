@@ -4,11 +4,71 @@
 
 This document provides an overview of the authentication API for the E-commerce Inventory Management System. It outlines the available endpoints for user registration, login, and inventory management, including request and response formats.
 
-## Base URL
 
-```
-http://localhost:4000/api/v1
-```
+Prerequisites
+Before you begin, make sure you have the following tools installed on your system:
+
+Node.js (v14.x or higher)
+Docker & Docker Compose (for Kafka and MongoDB setup)
+Git (for cloning the repository)
+Getting Started
+Clone the repository:
+
+bash
+Copy code
+git clone <repository-url>
+cd <repository-folder>
+Install dependencies: After navigating to the project directory, install the required Node.js packages:
+
+bash
+Copy code
+npm install
+Environment Setup: Create a .env file in the root directory and configure the following environment variables:
+
+bash
+Copy code
+MONGO_URI=mongodb://localhost:27017/inventory
+KAFKA_BROKER=localhost:9092
+PORT=5000
+JWT_SECRET=your_jwt_secret
+Run Kafka with Docker Compose: The project utilizes Kafka for real-time event handling. You can run Kafka along with Zookeeper using Docker Compose. There’s a docker-compose.yml file already configured in the root of the project.
+
+Run the following command:
+
+bash
+Copy code
+docker-compose up -d
+This will set up Kafka and Zookeeper on the default ports.
+
+Run MongoDB: If you’re using Docker for MongoDB as well, you can include a MongoDB service in your docker-compose.yml or run it separately with the following command:
+
+bash
+Copy code
+docker run -d -p 27017:27017 --name mongo mongo
+Start the Server: Once the environment is configured, you can start the API server:
+
+bash
+Copy code
+npm run dev
+The server will run at http://localhost:5000.
+
+API Documentation with Swagger
+The project is documented using Swagger. Once the server is running, you can access the full API documentation at:
+
+Swagger UI: http://localhost:5000/api-docs/
+This will give you a user-friendly interface where you can explore all available API endpoints, their request/response models, and test the APIs.
+
+Kafka Configuration
+Kafka is used to handle asynchronous events such as stock movement notifications, order updates, etc.
+
+Broker: Kafka broker is set to localhost:9092 in the .env file.
+Topics: Various Kafka topics are used for different types of events. Make sure to verify the topic names in the configuration file.
+You can view Kafka logs using:
+
+bash
+Copy code
+docker-compose logs kafka
+
 
 ## Endpoints
 
@@ -238,7 +298,11 @@ All errors will return a JSON response with the following structure:
 }
 ```
 
----
+API Documentation with Swagger
+The project is documented using Swagger. Once the server is running, you can access the full API documentation at:
+
+Swagger UI: <http://localhost:5000/api-docs/>
+This will give you a user-friendly interface where you can explore all available API endpoints, their request/response models, and test the APIs.
 
 # Kafka Setup with Offset Explorer
 
