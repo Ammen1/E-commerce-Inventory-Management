@@ -11,7 +11,6 @@ import { authorizeRoles } from '../../utils/authorizeRoles.js';
 
 const router = express.Router();
 
-
 /**
  * @swagger
  * components:
@@ -394,7 +393,7 @@ router.get('/stock-movements/:id', authorizeRoles("Admin", "Manager"), getStockM
  *                   type: string
  *                   example: "Stock movement not found"
  */
-router.patch('/stock-movements/:id', authorizeRoles("Admin"), updateStockMovement);
+router.patch('/stock-movements/:id', authorizeRoles("Admin", "Manager"), updateStockMovement);
 
 /**
  * @swagger
@@ -437,7 +436,7 @@ router.patch('/stock-movements/:id', authorizeRoles("Admin"), updateStockMovemen
  *                   type: string
  *                   example: "Stock movement not found"
  */
-router.delete('/stock-movements/:id', authorizeRoles("Admin"), deleteStockMovement);
+router.delete('/stock-movements/:id', authorizeRoles("Admin", "Manager"), deleteStockMovement);
 
 /**
  * @swagger
@@ -451,7 +450,7 @@ router.delete('/stock-movements/:id', authorizeRoles("Admin"), deleteStockMoveme
  *       500:
  *         description: Internal server error.
  */
-router.get('/statistics', authorizeRoles("Admin"), getStockMovementStatistics);
+router.get('/statistics', authorizeRoles("Admin", "Manager"), getStockMovementStatistics);
 
 /**
  * @swagger
@@ -487,7 +486,7 @@ router.get('/statistics', authorizeRoles("Admin"), getStockMovementStatistics);
  *       500:
  *         description: Internal server error
  */
-router.get('/trends', authorizeRoles("Admin"), analyzeRevenueTrends);
+router.get('/trends', authorizeRoles("Admin", "Manager"), analyzeRevenueTrends);
 
 
 

@@ -232,7 +232,7 @@ router.put('/order/status', authorizeRoles("Admin", "Manager", "Employee"), upda
  *       500:
  *         description: Internal server error
  */
-router.get('/statistics',authorizeRoles("Admin"), compareOrderTrends);
+router.get('/statistics', authorizeRoles("Admin"), compareOrderTrends);
 
 /**
  * @swagger
@@ -275,7 +275,7 @@ router.get('/statistics',authorizeRoles("Admin"), compareOrderTrends);
  *                   example: "Failed to retrieve revenue trends"
  */
 
-router.get('/revenue/monthly', getMonthlyRevenueTrends);
+router.get('/revenue/monthly', authorizeRoles("Admin"), getMonthlyRevenueTrends);
 
 /**
  * @swagger
@@ -318,7 +318,7 @@ router.get('/revenue/monthly', getMonthlyRevenueTrends);
  *                   example: "Failed to retrieve quarterly profit trends"
  */
 
-router.get('/profit/quarterly', getQuarterlyProfitTrends);
+router.get('/profit/quarterly' ,authorizeRoles("Admin"), getQuarterlyProfitTrends);
 
 /**
  * @swagger
@@ -361,7 +361,7 @@ router.get('/profit/quarterly', getQuarterlyProfitTrends);
  *                   example: "Failed to retrieve quarterly revenue trends"
  */
 
-router.get('/revenue/quarterly', getQuarterlyRevenueBreakdown);
+router.get('/revenue/quarterly',authorizeRoles("Admin"), getQuarterlyRevenueBreakdown);
 /**
  * @swagger
  * /api/v1/order/orders:
@@ -477,7 +477,7 @@ router.get('/revenue/quarterly', getQuarterlyRevenueBreakdown);
  *                   example: "Order not found"
  */
 
-router.get('/orders', getAllOrders);
-router.get('/orders/:orderId', getOrderById);
-router.delete('/orders/:orderId', deleteOrder);
+router.get('/orders',authorizeRoles("Admin"), getAllOrders);
+router.get('/orders/:orderId',authorizeRoles("Admin", "Manager", "Employee"), getOrderById);
+router.delete('/orders/:orderId',authorizeRoles("Admin"), deleteOrder);
 export default router;

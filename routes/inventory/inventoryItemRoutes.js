@@ -102,7 +102,7 @@ const router = express.Router();
  *                   example: "Invalid input data"
  */
 
-router.post("/inventory", authorizeRoles("Admin", "Manager"), CreateInventory);
+router.post("/inventory", authorizeRoles("Admin"), CreateInventory);
 
 /**
  * @swagger
@@ -305,7 +305,7 @@ router.get('/inventory/:id', authorizeRoles("Admin", "Manager", "Employee"), get
  *                   example: "Inventory item not found"
  */
 
-router.put("/inventory/:id", authorizeRoles("Admin"), updateInventoryItem);
+router.put("/inventory/:id", authorizeRoles("Admin", "Manager"),  updateInventoryItem);
 
 /**
  * @swagger
@@ -349,7 +349,7 @@ router.put("/inventory/:id", authorizeRoles("Admin"), updateInventoryItem);
  *                   example: "Inventory item not found"
  */
 
-router.delete("/inventory/:id", authorizeRoles("Admin"), deleteInventoryItem);
+router.delete("/inventory/:id", authorizeRoles("Admin", "Manager"), deleteInventoryItem);
 
 
 /**
@@ -643,7 +643,7 @@ router.get('/search',authorizeRoles("Admin", "Manager", "Employee"), searchProdu
  *       500:
  *         description: Error generating report
  */
-router.get('/pdf',authorizeRoles("Admin"), generateInventoryReportPDF);
+router.get('/pdf',authorizeRoles("Admin", "Manager"), generateInventoryReportPDF);
 
 /**
  * @swagger
@@ -686,6 +686,6 @@ router.get('/pdf',authorizeRoles("Admin"), generateInventoryReportPDF);
  *         description: Internal server error
  */
 
-router.get('/statistics',authorizeRoles("Admin"), getStatistics);
+router.get('/statistics',authorizeRoles("Admin", "Manager"), getStatistics);
 
 export default router;
