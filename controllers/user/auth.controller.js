@@ -20,14 +20,11 @@ export const register = catchAsyncErrors(async (req, res, next) => {
     if (existingUser) {
       return next(new ErrorHandler("Email already registered!", 400));
     }
-
-      // Validate phone number (10 digits)
-  const phoneRegex = /^\d{10}$/;
-  if (!phoneRegex.test(phone)) {
-    return next(new ErrorHandler("Phone number must be exactly 10 digits!", 400));
-  }
-
-
+    // Validate phone number (10 digits, can start with 0)
+    const phoneRegex = /^(0\d{9}|\d{10})$/;
+    if (!phoneRegex.test(phone)) {
+      return next(new ErrorHandler("Phone number must be exactly 10 digits!", 400));
+    }
     const userData = {
       name,
       email,
@@ -74,69 +71,55 @@ export const login = catchAsyncErrors(async (req, res, next) => {
 export const resetPasswordRequest = catchAsyncErrors(async (req, res, next) => {
   const { email } = req.body;
 
-  const user = await User.findUnique({ where: { email } });
+  const user = await User.findOne({ email });
 
   if (!user) {
     return next(new ErrorHandler('User not found with this email', 404));
   }
 
   // Check if user status is disabled
-  if (user.isActive === true) {
+  if (user.isActive === false) {
     return next(new ErrorHandler("Your account is disabled. Please contact support.", 403));
   }
 
   // Generate a reset token
   const token = crypto.randomBytes(48).toString('hex');
+  console.log("Take this token then enter on swagger to reset password:", token);
 
-  // Update user with reset token
-  await User.update({
-    where: { email },
-    data: { resetPasswordToken: token }
-  });
+  user.passwordResetToken = token;
+  await user.save();
 
   // Create the reset password link
-  const resetPageLink = `http://localhost:3000/reset-password?token=${token}&email=${email}`;
+  const resetPageLink = `http://localhost:5000/api-docs/#/Auth/post_api_v1_users_reset_password`;
   const subject = 'Password Reset Request for my account';
-  const html = passwordResetTemplate(resetPageLink); 
+  const html = passwordResetTemplate(resetPageLink);
 
   // Send email with reset link
   const response = await sendMail({ to: email, subject, html });
   res.json({ success: true, message: 'Password reset email sent', response });
 });
 
+
 export const resetPassword = catchAsyncErrors(async (req, res, next) => {
   const { email, password, token } = req.body;
 
   // Find the user with the provided email and token
-  const user = await User.findUnique({
-    where: { email, passwordResetToken: token }
-  });
+  const user = await User.findOne({ email, passwordResetToken: token });
 
   if (!user) {
     return next(new ErrorHandler('Invalid token or email', 400));
   }
 
-  // Hash the new password
-  const salt = crypto.randomBytes(16).toString('hex');
-  crypto.pbkdf2(password, salt, 310000, 32, 'sha256', async (err, hashedPassword) => {
-    if (err) {
-      return next(new ErrorHandler('Error hashing password', 500));
-    }
+  // Update the user with the new password
+  user.password = password;
+  user.passwordResetToken = null;
 
-    await user.update({
-      where: { email },
-      data: {
-        password: hashedPassword.toString('hex'),
-        salt,
-        passwordResetToken: null
-      }
-    });
+  await user.save();
 
-    // Send confirmation email
-    const subject = 'Password successfully reset';
-    const html = `<p>You have successfully reset your password.</p>`;
-    await sendMail({ to: email, subject, html });
+  // Send confirmation email
+  const subject = 'Password successfully reset';
+  const html = `<p>You have successfully reset your password.</p>`;
+  await sendMail({ to: email, subject, html });
 
-    res.json({ success: true, message: 'Password successfully reset' });
-  });
+  res.json({ success: true, message: 'Password successfully reset' });
 });

@@ -18,7 +18,7 @@ const stockMovementSchema = new mongoose.Schema({
     type: Number,
     required: [true, 'Quantity change is required'],
     validate: {
-      validator: function(value) {
+      validator: function (value) {
         return value !== 0;
       },
       message: 'Quantity change must be a non-zero value',
@@ -40,18 +40,25 @@ const stockMovementSchema = new mongoose.Schema({
   },
 });
 
-// Middleware to enforce specific validation based on movement type
-stockMovementSchema.pre('validate', function(next) {
-  if (this.type === 'Sale' || this.type === 'Adjustment') {
-    if (this.quantityChange > 0) {
-      return next(new Error('Quantity change must be negative for Sale and Adjustment types.'));
-    }
-  } else if (this.type === 'Purchase' || this.type === 'Return') {
-    if (this.quantityChange < 0) {
-      return next(new Error('Quantity change must be positive for Purchase and Return types.'));
+
+// Middleware to store item name when a stock movement is created
+stockMovementSchema.pre('save', async function (next) {
+  if (this.isNew) {
+    const item = await mongoose.model('InventoryItem').findById(this.item);
+    if (item) {
+      this.itemName = item.name;
     }
   }
   next();
 });
+
+// Middleware to set item to null if the associated InventoryItem is deleted
+stockMovementSchema.pre('save', async function (next) {
+  if (!this.item) {
+    this.item = null;
+  }
+  next();
+});
+
 
 export const StockMovement = mongoose.model('StockMovement', stockMovementSchema);

@@ -51,8 +51,10 @@ services:
       - "2181:2181"  # Map Zookeeper's port
     environment:
       - ALLOW_ANONYMOUS_LOGIN=yes  # Allow anonymous login for Zookeeper
+      - ZOO_SESSION_TIMEOUT=60000000   
     networks:
       - inventory-network
+      
 
   # Kafka Service
   kafka:

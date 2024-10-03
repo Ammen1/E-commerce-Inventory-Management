@@ -6,7 +6,7 @@ import {
     updateStockMovement, 
     deleteStockMovement, 
     recordStockMovement  } from '../../controllers/stockmovement/stockMovement.controller.js';
-import { getStockMovementStatistics, analyzeRevenueTrends } from '../../controllers/stockmovement/getStockMovementStatistics .js';
+import { getStockMovementStatistics, analyzeRevenueTrends } from '../../controllers/stockmovement/getStockMovementStatistics.js';
 import { authorizeRoles } from '../../utils/authorizeRoles.js';
 
 const router = express.Router();

@@ -1,5 +1,5 @@
-import { catchAsyncErrors } from "../../middlewares/catchAsyncError"
-import ErrorHandler from "../../middlewares/error"
+import { catchAsyncErrors } from "../../middlewares/catchAsyncError.js"
+import ErrorHandler from "../../middlewares/error.js"
 
 export const userLogout = catchAsyncErrors(async(req,res, next) => {
     try{

@@ -2,6 +2,7 @@ import swaggerJsDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 import dotenv from 'dotenv';
 
+
 dotenv.config();
 
 // Swagger definition
@@ -14,7 +15,7 @@ const swaggerDefinition = {
   },
   servers: [
     {
-      url: process.env.API_BASE_URL || 'http://localhost:4000', 
+      url: process.env.API_BASE_URL || 'http://localhost:5000', 
       description: 'Development server',
     },
   ],
@@ -37,7 +38,7 @@ const swaggerDefinition = {
 // Options for swagger-jsdoc
 const options = {
   swaggerDefinition,
-  apis: ['./routes/inventory/*.js', './routes/users/*.js'],
+  apis: ['./routes/inventory/*.js', './routes/users/*.js', './routes/stocks/stockRoutes.js', './routes/order/orderRoutes.js'],
 };
 
 // Initialize swagger-jsdoc

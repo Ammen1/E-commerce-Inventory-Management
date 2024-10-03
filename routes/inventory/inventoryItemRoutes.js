@@ -7,7 +7,7 @@ import {
      updateInventoryItem, 
      deleteInventoryItem, 
      getInventoryItem } from "../../controllers/inventory/inventoryItem.controller.js";
-import { getStatistics } from "../../controllers/inventory/getStatistics .js";
+import { getStatistics } from "../../controllers/inventory/getStatistics.js";
 import { authorizeRoles } from "../../utils/authorizeRoles.js";
 import { filterItemsController } from "../../controllers/inventory/filterItems.js"; 
 import { getCategoryItem } from "../../controllers/inventory/getCategoryItemOne.js";

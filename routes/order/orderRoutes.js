@@ -2,7 +2,7 @@ import express from 'express';
 import { createOrder, updateOrderStatus, getAllOrders, getOrderById, deleteOrder} from '../../controllers/order/orderController.js';
 import { compareOrderTrends } from '../../controllers/order/getOrderStatistics.js';
 import { authorizeRoles } from '../../utils/authorizeRoles.js';
-import { getMonthlyRevenueTrends } from '../../controllers/order/getMonthlyRevenueTrends .js';
+import { getMonthlyRevenueTrends } from '../../controllers/order/getMonthlyRevenueTrends.js';
 import { getQuarterlyProfitTrends } from '../../controllers/order/getQuarterlyProfitTrends.js';
 import { getQuarterlyRevenueBreakdown } from '../../controllers/order/getQuarterlyRevenueBreakdown.js';
 

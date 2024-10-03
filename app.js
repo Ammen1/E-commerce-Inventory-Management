@@ -11,8 +11,10 @@ import { dbConnection } from "./db/dbConnection.js";
 import setupSwagger from './swagger.js';
 
 
-import InventoryItemRouter from "./routes/inventory/inventoryItemRoutes.js"
+import InventoryItemRouter from "./routes/inventory/inventoryItemRoutes.js";
 import UserRouter from "./routes/users/userRoutes.js";
+import stockMovementRoutes from "./routes/stocks/stockRoutes.js";
+import orderRoutes from "./routes/order/orderRoutes.js"
 
 
 const app = express();
@@ -48,6 +50,8 @@ app.get('/health', (req, res) => {
 // Register user routes
 app.use("/api/v1/users", UserRouter);
 app.use("/api/v1/inventory", isAuthenticated, InventoryItemRouter)
+app.use('/api/v1/stocks', isAuthenticated, stockMovementRoutes);
+app.use('/api/v1/order',isAuthenticated,  orderRoutes);
 
 // Connect to DB
 dbConnection();
