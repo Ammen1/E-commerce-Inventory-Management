@@ -1,5 +1,11 @@
 import express from "express";
-import { register, login } from "../../controllers/userControllers/auth.controller.js";
+import {
+  register,
+  login,
+  resetPasswordRequest,
+  resetPassword,
+} from "../../controllers/user/auth.controller.js";
+import { userLogout } from "../../controllers/user/user.logout.js";
 
 const router = express.Router();
 
@@ -168,7 +174,112 @@ const router = express.Router();
  *         description: Invalid Email Or Password
  */
 
+/**
+ * @swagger
+ * /api/v1/users/reset-password-request:
+ *   post:
+ *     summary: Request a password reset 
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 description: User's email
+ *             required:
+ *               - email
+ *             example:
+ *               email: amenguda@gmail.com
+ *     responses:
+ *       200:
+ *         description: Password reset email sent
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: 'Password reset email sent'
+ *       404:
+ *         description: User not found with this email
+ *       403:
+ *         description: Account is disabled
+ */
+
+/**
+ * @swagger
+ * /api/v1/users/reset-password:
+ *   post:
+ *     summary: Reset the password After Request a password reset go to  your email and click sent link then on the request fildes add your password and  then copy the token from your console add on the token filde
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 description: User's email
+ *               password:
+ *                 type: string
+ *                 description: New user's password
+ *               token:
+ *                 type: string
+ *                 description: Password reset token
+ *             required:
+ *               - email
+ *               - password
+ *               - token
+ *             example:
+ *               email: amenguda@gmail.com
+ *               password: Amen#19712
+ *               token: your-reset-token
+ *     responses:
+ *       200:
+ *         description: Password successfully reset
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: 'Password successfully reset'
+ *       400:
+ *         description: Invalid token or email
+ */
+
+/**
+ * @swagger
+ * /api/v1/users/logout:
+ *   post:
+ *     summary: Logout the user
+ *     tags: [Auth]
+ *     responses:
+ *       200:
+ *         description: Logged out successfully
+ *       500:
+ *         description: Server Error
+ */
+
 router.post("/register", register);
 router.post("/login", login);
+router.post("/reset-password-request", resetPasswordRequest);
+router.post("/reset-password", resetPassword);
+router.post('/logout', userLogout);
+
 
 export default router;
