@@ -8,7 +8,7 @@ const brokers = process.env.KAFKA_BROKERS ? process.env.KAFKA_BROKERS.split(',')
 const kafka = new Kafka({
   clientId: 'inventory-system',
   brokers: brokers,
-  logLevel: logLevel.DEBUG,
+  // logLevel: logLevel.DEBUG,
 });
 
 const producer = kafka.producer();
@@ -26,9 +26,7 @@ const sendKafkaMessage = async (topic, message) => {
   try {
     await producer.send({
       topic,
-      messages: [
-        { value: JSON.stringify(message) },
-      ],
+      messages: [{ value: JSON.stringify(message) }],
     });
     console.log(`Message sent to Kafka topic ${topic}:`, message);
   } catch (error) {
@@ -52,9 +50,9 @@ const transporter = nodemailer.createTransport({
 const sendLowStockAlert = async (alert) => {
   const mailOptions = {
     from: process.env.EMAIL_FROM,
-    to: alert.recipientEmail || 'amenguda@gmail.com',
-    subject: `Low Stock Alert: ${alert.itemName}`,
-    text: `The stock for item '${alert.itemName}' is low.\nCurrent Quantity: ${alert.currentQuantity}\nThreshold: ${alert.threshold}\n`,
+    to: alert.recipientEmail,
+    subject: `Low Stock Alert-Predefined Threshold: ${alert.itemName}`,
+    text: `The stock for item '${alert.itemName}' is low.\nCurrent inventory levels: ${alert.currentQuantity}\nThreshold: ${alert.threshold}.\nTransaction type: ${alert.movementType}.\nQuantity change: ${alert.quantityChange}`,
   };
 
   try {
@@ -65,4 +63,38 @@ const sendLowStockAlert = async (alert) => {
   }
 };
 
-export { sendLowStockAlert, sendKafkaMessage }; 
+/**
+ * Function to send order notifications for important events
+ * @param {Object} notificationDetails - Contains details about the notification
+ * @param {String} notificationDetails.type - Type of notification (e.g., "large-order", "out-of-stock")
+ * @param {String} notificationDetails.message - Message to be sent
+ * @param {Object} notificationDetails.order - Order object with relevant data
+ * @param {Object} notificationDetails.customer - Customer details
+ */
+const sendOrderNotification = async ({ type, message}) => {
+  const emailOptions = {
+    from: process.env.EMAIL_FROM,
+    to: process.env.EMAIL_TO,
+    subject: `Order Notification: ${type}`,
+    text: `Important transactions ${type},\n\n${message}\nType:${type}`,
+  };
+
+  try {
+    // Send email notification
+    await transporter.sendMail(emailOptions);
+    console.log(`Order notification email sent for ${type}: ${message}`);
+
+    // Send Kafka message
+    const kafkaMessage = {
+      type,
+      message,
+    };
+
+    await sendKafkaMessage('order-notifications', kafkaMessage);
+    console.log(`Order notification Kafka message sent for ${type}:`, kafkaMessage);
+  } catch (error) {
+    console.error(`Error sending order notification for ${type}:`, error);
+  }
+};
+
+export { sendLowStockAlert, sendKafkaMessage, sendOrderNotification };
