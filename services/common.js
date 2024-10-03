@@ -2,12 +2,12 @@ import nodemailer from 'nodemailer';
 
 // Create a transporter object using the default SMTP transport
 const transporter = nodemailer.createTransport({
-  host: "mail.gooderash.com",
-  port: 465,
+  host: process.env.EMAIL_HOST,
+  port: process.env.EMAIL_PORT,
   secure: true, 
   auth: {
-    user: 'e-learning@gooderash.com',
-    pass: 'Amen#19729',
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
   },
   debug: true, // Enable debugging
 });
