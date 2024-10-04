@@ -34,12 +34,13 @@ export async function initiateTransaction(req, res) {
     // Fetch orders to calculate total amount
     const orders = await Order.find({ _id: { $in: orderIds } });
     const totalAmount = orders.reduce((total, order) => total + order.totalAmount, 0);
+    console.log(totalAmount)
 
     const data = {
       email,
       first_name,
       last_name,
-      amount: totalAmount, 
+      amount: totalAmount,
       currency,
       items: orderIds,
       callbackUrl: `http://localhost:5000/api/v1/payment/verify/${txRef}`,
@@ -64,6 +65,7 @@ export async function initiateTransaction(req, res) {
     res.status(500).json({ error: 'Failed to initiate transaction. Please try again.' });
   }
 }
+
 
 export async function verifyTransaction(req, res) {
   const { txId } = req.params;

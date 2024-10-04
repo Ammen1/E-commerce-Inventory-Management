@@ -15,7 +15,6 @@ const router = express.Router();
  
 */
 
-
 /**
  * @swagger
  * /api/v1/payment/initiate:
@@ -32,7 +31,6 @@ const router = express.Router();
  *               - email
  *               - first_name
  *               - last_name
- *               - amount
  *               - currency
  *               - callbackUrl
  *               - returnUrl
@@ -52,33 +50,18 @@ const router = express.Router();
  *                 type: string
  *                 description: User's last name
  *                 default: "Amen"
- *               amount:
- *                 type: number
- *                 minimum: 0
- *                 description: Transaction amount (must be positive)
- *                 default: 1000
  *               currency:
  *                 type: string
  *                 enum: ['USD', 'ETB', 'NGN', 'KES', 'GBP']
  *                 description: Currency for the transaction
  *                 default: "ETB"
- *               callbackUrl:
- *                 type: string
- *                 format: uri
- *                 description: Callback URL for transaction results
- *                 default: "http://localhost:5000/api/transactions/verify/tx-1234567890"
- *               returnUrl:
- *                 type: string
- *                 format: uri
- *                 description: URL to redirect after payment
- *                 default: "http://localhost:5000/thank-you"
  *               items:
  *                 type: array
  *                 items:
  *                   type: string
  *                   description: ID of the item being purchased
- *                 description: Array of item IDs
- *                 default: ["66ffabdbc536c55726c31c6c"]
+ *                 description: Array of item IDs this must be orders id
+ *                 default:     ["67002fb7b3be2e40751526e4", "67002fb7b3be2e40751526e4"]
  *               customization:
  *                 type: object
  *                 properties:
