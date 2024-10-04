@@ -3,40 +3,54 @@ import Chapa from "chapa";
 import { Transaction } from '../models/payment.Model.js';
 import Order from "../models/order.Model.js";
 
-
-
 const chapa = new Chapa(process.env.TEST_SECRET_KEY);
 
 export async function initiateTransaction(req, res) {
-  const { email, first_name, last_name, amount, currency, items, callbackUrl } = req.body;  
+  const { email, first_name, last_name, items, currency, callbackUrl } = req.body;  
   const now = new Date();
   const txRef = `tx-${now.getTime()}`;
-  
+
   // Ensure required fields are present
-  if (!email || !first_name || !last_name || !amount || !currency || !items) {
+  if (!email || !first_name || !last_name || !currency || !items) {
     return res.status(400).json({ error: 'Missing required fields' });
   }
 
-  // Convert items to ObjectId if they are not already
-  const orderIds = items.map(item => new mongoose.Types.ObjectId(item)); 
+  // Validate and convert items to ObjectId
+  let orderIds;
+  try {
+    orderIds = items.map(item => {
+      if (!mongoose.Types.ObjectId.isValid(item)) {
+        throw new Error(`Invalid ObjectId: ${item}`);
+      }
+      return new mongoose.Types.ObjectId(item);
+    });
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
 
-  const data = {
-    email,
-    first_name,
-    last_name,
-    amount,
-    currency,
-    items: orderIds,
-    callbackUrl: `http://localhost:5000/api/transactions/verify/${txRef}`,
-    tx_ref: txRef,
-    return_url: "http://localhost:5000/thank-you",
-    customization: {
-      title: '2utube',
-      description: 'Payment for your services',
-    },
-  };
+  console.log(orderIds);
 
   try {
+    // Fetch orders to calculate total amount
+    const orders = await Order.find({ _id: { $in: orderIds } });
+    const totalAmount = orders.reduce((total, order) => total + order.totalAmount, 0);
+
+    const data = {
+      email,
+      first_name,
+      last_name,
+      amount: totalAmount, 
+      currency,
+      items: orderIds,
+      callbackUrl: `http://localhost:5000/api/v1/payment/verify/${txRef}`,
+      tx_ref: txRef,
+      return_url: "http://localhost:5000/thank-you",
+      customization: {
+        title: '2utube',
+        description: 'Payment for your services',
+      },
+    };
+
     const response = await chapa.initialize(data);
     
     const transaction = await Transaction.create({
@@ -50,7 +64,6 @@ export async function initiateTransaction(req, res) {
     res.status(500).json({ error: 'Failed to initiate transaction. Please try again.' });
   }
 }
-
 
 export async function verifyTransaction(req, res) {
   const { txId } = req.params;
@@ -69,10 +82,10 @@ export async function verifyTransaction(req, res) {
     transaction.status = verificationResult.status;
     await transaction.save();
 
-    // If transaction is successful, mark the corresponding order as paid
+    // If transaction is successful, mark the corresponding orders as paid
     if (verificationResult.status === 'success') {
-      const order = await Order.findById(transaction.items);
-      if (order) {
+      const orders = await Order.find({ _id: { $in: transaction.items } });
+      for (const order of orders) {
         await order.markAsPaid();
       }
     }
@@ -84,11 +97,11 @@ export async function verifyTransaction(req, res) {
   }
 }
 
-
 export async function getAllTransactions(req, res) {
   try {
     // Populate the items field with the title of the related orders
-    const transactions = await Transaction.find().populate('items', 'title');
+    const transactions = await Transaction.find().populate('items', 'name');
+    console.log(transactions);
     res.status(200).json(transactions);
   } catch (error) {
     console.error('Error fetching transactions:', error);

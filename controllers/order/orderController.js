@@ -1,4 +1,3 @@
-// controllers/orderController.js
 import { catchAsyncErrors } from "../../middlewares/catchAsyncError.js";
 import ErrorHandler from "../../middlewares/error.js";
 import InventoryItem from "../../models/inventoryItem.Model.js";
@@ -199,4 +198,23 @@ export const deleteOrder = catchAsyncErrors(async (req, res, next) => {
         success: true,
         message: "Order deleted successfully",
     });
+});
+
+// Controller to get orders by customer ID
+export const getOrdersByCustomerId = catchAsyncErrors(async (req, res) => {
+  const { customerId } = req.params;
+
+  try {
+    const orders = await Order.find({ customer: customerId }).populate('items.product', 'name');
+
+    if (orders.length === 0) {
+      return next(new ErrorHandler("No orders found for this customer", 404))
+    }
+
+    res.status(200).json(orders);
+  } catch (error) {
+    console.error('Error retrieving orders:', error);
+    res.status(500).json({ message: 'An error occurred while retrieving orders.', error: error.message });
+    return next(new ErrorHandler(error.message || "Server Error", 500))
+  }
 });

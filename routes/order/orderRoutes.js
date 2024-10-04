@@ -1,5 +1,5 @@
 import express from 'express';
-import { createOrder, updateOrderStatus, getAllOrders, getOrderById, deleteOrder} from '../../controllers/order/orderController.js';
+import { createOrder, updateOrderStatus, getAllOrders, getOrderById, deleteOrder, getOrdersByCustomerId} from '../../controllers/order/orderController.js';
 import { compareOrderTrends } from '../../controllers/order/getOrderStatistics.js';
 import { authorizeRoles } from '../../utils/authorizeRoles.js';
 import { getMonthlyRevenueTrends } from '../../controllers/order/getMonthlyRevenueTrends.js';
@@ -477,7 +477,81 @@ router.get('/revenue/quarterly',authorizeRoles("Admin"), getQuarterlyRevenueBrea
  *                   example: "Order not found"
  */
 
+/**
+ * @swagger
+ * /api/v1/order/orders/customer/{customerId}:
+ *   get:
+ *     summary: Retrieve orders by customer ID
+ *     tags: [Orders]
+ *     description: Get a list of orders associated with a specific customer ID.
+ *     parameters:
+ *       - in: path
+ *         name: customerId
+ *         required: true
+ *         description: The ID of the customer whose orders you want to retrieve.
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: A list of orders for the specified customer.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   _id:
+ *                     type: string
+ *                     description: The order ID.
+ *                   customer:
+ *                     type: string
+ *                     description: The ID of the customer.
+ *                   items:
+ *                     type: array
+ *                     items:
+ *                       type: object
+ *                       properties:
+ *                         product:
+ *                           type: string
+ *                           description: The ID of the product.
+ *                         quantity:
+ *                           type: integer
+ *                           description: The quantity of the product ordered.
+ *                         price:
+ *                           type: number
+ *                           description: The price of the product.
+ *                         subtotal:
+ *                           type: number
+ *                           description: The subtotal for the item.
+ *                   totalAmount:
+ *                     type: number
+ *                     description: The total amount for the order.
+ *                   status:
+ *                     type: string
+ *                     description: The current status of the order.
+ *                   importantTransaction:
+ *                     type: boolean
+ *                     description: Indicates if the order is an important transaction.
+ *                   paid:
+ *                     type: boolean
+ *                     description: Indicates if the order has been paid.
+ *                   createdAt:
+ *                     type: string
+ *                     format: date-time
+ *                     description: The timestamp when the order was created.
+ *                   updatedAt:
+ *                     type: string
+ *                     format: date-time
+ *                     description: The timestamp when the order was last updated.
+ *       404:
+ *         description: No orders found for the specified customer.
+ *       500:
+ *         description: An error occurred while retrieving orders.
+ */
+
 router.get('/orders',authorizeRoles("Admin"), getAllOrders);
 router.get('/orders/:orderId',authorizeRoles("Admin", "Manager", "Employee"), getOrderById);
 router.delete('/orders/:orderId',authorizeRoles("Admin"), deleteOrder);
+router.get('/orders/customer/:customerId', getOrdersByCustomerId);
 export default router;

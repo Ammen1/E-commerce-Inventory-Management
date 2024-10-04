@@ -12,7 +12,9 @@ const router = express.Router();
  * tags:
  *   name: Transactions
  *   description: Transaction management
- */
+ 
+*/
+
 
 /**
  * @swagger
@@ -45,11 +47,11 @@ const router = express.Router();
  *               first_name:
  *                 type: string
  *                 description: User's first name
- *                 default: "John"
+ *                 default: "Abush"
  *               last_name:
  *                 type: string
  *                 description: User's last name
- *                 default: "Doe"
+ *                 default: "Amen"
  *               amount:
  *                 type: number
  *                 minimum: 0
@@ -59,7 +61,7 @@ const router = express.Router();
  *                 type: string
  *                 enum: ['USD', 'ETB', 'NGN', 'KES', 'GBP']
  *                 description: Currency for the transaction
- *                 default: "USD"
+ *                 default: "ETB"
  *               callbackUrl:
  *                 type: string
  *                 format: uri

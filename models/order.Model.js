@@ -27,8 +27,8 @@ const orderSchema = new mongoose.Schema(
         },
         subtotal: {
           type: Number,
-          required: true
-        }
+          required: true,
+        },
       },
     ],
     totalAmount: {
@@ -55,12 +55,16 @@ const orderSchema = new mongoose.Schema(
   }
 );
 
-// Pre-save hook to handle important transactions
+// Pre-save hook to calculate totalAmount based on item subtotals
 orderSchema.pre("save", function (next) {
+  this.totalAmount = this.items.reduce((acc, item) => acc + item.subtotal, 0);
+  
+  // Mark as an important transaction if totalAmount exceeds the threshold
   const largeOrderThreshold = 5000;
   if (this.totalAmount >= largeOrderThreshold) {
     this.importantTransaction = true;
   }
+
   next();
 });
 
@@ -68,9 +72,8 @@ orderSchema.pre("save", function (next) {
 orderSchema.pre("remove", async function (next) {
   try {
     if (this.customer) {
-      //keep the orders and just set the customer to null
+      // Keep the orders and just set the customer to null
       await mongoose.model("Order").updateMany({ customer: this.customer }, { $set: { customer: null } });
-
       console.log(`All orders for customer ${this.customer} have been deleted or updated.`);
     }
     next();
