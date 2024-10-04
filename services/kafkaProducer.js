@@ -1,6 +1,7 @@
 import { Kafka, Partitioners, logLevel } from 'kafkajs';
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
+import cron from 'node-cron';
 
 dotenv.config();
 const brokers = process.env.KAFKA_BROKERS ? process.env.KAFKA_BROKERS.split(',') : ['localhost:9092'];
@@ -97,4 +98,25 @@ const sendOrderNotification = async ({ type, message}) => {
   }
 };
 
-export { sendLowStockAlert, sendKafkaMessage, sendOrderNotification };
+const scheduleReportGeneration = async () => {
+  await producer.connect();
+
+  // Schedule a task to run every 24 hours
+  cron.schedule('0 0 * * *', async () => {
+    try {
+      console.log('Sending message to Kafka for report generation');
+      await producer.send({
+        topic: 'inventory-report-topic',
+        messages: [{ value: 'generate_report' }],
+      });
+    } catch (error) {
+      console.error('Error sending message to Kafka:', error);
+    }
+  });
+};
+
+
+// Start the report generation schedule after producer is initialized
+scheduleReportGeneration();
+
+export { sendLowStockAlert, sendKafkaMessage, sendOrderNotification, scheduleReportGeneration };

@@ -38,7 +38,7 @@ const swaggerDefinition = {
 // Options for swagger-jsdoc
 const options = {
   swaggerDefinition,
-  apis: ['./routes/inventory/*.js', './routes/users/*.js', './routes/stocks/stockRoutes.js', './routes/order/orderRoutes.js'],
+  apis: ['./routes/inventory/*.js', './routes/users/*.js', './routes/stocks/stockRoutes.js', './routes/order/orderRoutes.js', './routes/payment/transactionRoutes.js'],
 };
 
 // Initialize swagger-jsdoc

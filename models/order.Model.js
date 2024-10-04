@@ -45,12 +45,15 @@ const orderSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    paid: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
   }
 );
-
 
 // Pre-save hook to handle important transactions
 orderSchema.pre("save", function (next) {
@@ -61,19 +64,27 @@ orderSchema.pre("save", function (next) {
   next();
 });
 
-// Middleware to handle cascading customer deletion
+// Middleware to handle cascading customer deletion (if needed)
 orderSchema.pre("remove", async function (next) {
   try {
-    // If customer is deleted, handle how to deal with orders
     if (this.customer) {
-      this.customer = null;
+      //keep the orders and just set the customer to null
+      await mongoose.model("Order").updateMany({ customer: this.customer }, { $set: { customer: null } });
+
+      console.log(`All orders for customer ${this.customer} have been deleted or updated.`);
     }
     next();
   } catch (err) {
+    console.error(`Error during order deletion: ${err.message}`);
     next(err);
   }
 });
 
-// Create and export Order model
+// Method to mark the order as paid
+orderSchema.methods.markAsPaid = async function () {
+  this.paid = true;
+  await this.save();
+};
+
 const Order = mongoose.model("Order", orderSchema);
 export default Order;

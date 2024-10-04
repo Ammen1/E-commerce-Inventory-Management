@@ -15,6 +15,8 @@
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "chapa": "^1.0.5",
+    "chapa-nodejs": "^2.0.1",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
@@ -26,6 +28,7 @@
     "kafka-node": "^5.0.0",
     "kafkajs": "^2.2.4",
     "mongoose": "^8.7.0",
+    "node-cron": "^3.0.3",
     "nodemailer": "^6.9.15",
     "pdfkit": "^0.15.0",
     "swagger-jsdoc": "^6.2.8",
