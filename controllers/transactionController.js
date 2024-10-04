@@ -26,7 +26,7 @@ export async function initiateTransaction(req, res) {
     last_name,
     amount,
     currency,
-    items: orderIds, // Update this to use the ObjectId array
+    items: orderIds,
     callbackUrl: `http://localhost:5000/api/transactions/verify/${txRef}`,
     tx_ref: txRef,
     return_url: "http://localhost:5000/thank-you",
@@ -71,9 +71,9 @@ export async function verifyTransaction(req, res) {
 
     // If transaction is successful, mark the corresponding order as paid
     if (verificationResult.status === 'success') {
-      const order = await Order.findById(transaction.items);  // Ensure this works with the array of items
+      const order = await Order.findById(transaction.items);
       if (order) {
-        await order.markAsPaid();  // Assuming you have a method like this in your Order model
+        await order.markAsPaid();
       }
     }
 
