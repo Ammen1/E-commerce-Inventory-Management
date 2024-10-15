@@ -52,6 +52,14 @@ stockMovementSchema.pre('save', async function (next) {
   next();
 });
 
+// Middleware to set user to null if the associated User is deleted
+stockMovementSchema.pre('save', async function name(next) {
+  if (!this.user) {
+    this.user = null
+  }
+  next();
+});
+
 // Middleware to set item to null if the associated InventoryItem is deleted
 stockMovementSchema.pre('save', async function (next) {
   if (!this.item) {
