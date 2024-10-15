@@ -3,7 +3,6 @@ import ErrorHandler from '../../middlewares/error.js';
 import InventoryItem from '../../models/inventoryItem.Model.js';
 import { getStartOfPeriod } from '../getStartOfPeriod.js';
 
-
 export const getStatistics = catchAsyncErrors(async (req, res, next) => {
     try {
         const currentDate = new Date();
@@ -16,22 +15,23 @@ export const getStatistics = catchAsyncErrors(async (req, res, next) => {
             yesterday: getStartOfPeriod(currentDate, 'lastDay')
         };
 
-        // Query database for each period count
+        // Count documents for each period
         const result = {
-            thisMonth: await InventoryItem.countDocuments({ createdAt: { $gte: periods.thisMonth } }),
-            lastMonth: await InventoryItem.countDocuments({ createdAt: { $gte: periods.lastMonth, $lt: periods.thisMonth } }),
-            thisWeek: await InventoryItem.countDocuments({ createdAt: { $gte: periods.thisWeek } }),
-            lastWeek: await InventoryItem.countDocuments({ createdAt: { $gte: periods.lastWeek, $lt: periods.thisWeek } }),
-            today: await InventoryItem.countDocuments({ createdAt: { $gte: periods.today } }),
-            yesterday: await InventoryItem.countDocuments({ createdAt: { $gte: periods.yesterday, $lt: periods.today } })
+            thisMonth: await InventoryItem.countDocuments({ createdAt: { $gte: periods.thisMonth } }).lean(),
+            lastMonth: await InventoryItem.countDocuments({ createdAt: { $gte: periods.lastMonth, $lt: periods.thisMonth } }).lean(),
+            thisWeek: await InventoryItem.countDocuments({ createdAt: { $gte: periods.thisWeek } }).lean(),
+            lastWeek: await InventoryItem.countDocuments({ createdAt: { $gte: periods.lastWeek, $lt: periods.thisWeek } }).lean(),
+            today: await InventoryItem.countDocuments({ createdAt: { $gte: periods.today } }).lean(),
+            yesterday: await InventoryItem.countDocuments({ createdAt: { $gte: periods.yesterday, $lt: periods.today } }).lean()
         };
 
         res.status(200).json({
             success: true,
-            result
+            result,
+            timestamp: new Date().toISOString()
         });
     } catch (error) {
         console.error("Error fetching statistics:", error);
-        return next(new ErrorHandler(error.message || "Server Error", 500));
+        return next(new ErrorHandler("Server Error", 500));
     }
 });
